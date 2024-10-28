@@ -6,17 +6,25 @@ struct ToDoListView: View {
     @State private var isShowingAlert = false
     @State private var isAddingTodo = false
     
-    // New state for filter index
-    @State private var filterIndex = 0
+    
     
     var body: some View {
         NavigationView {
             VStack {
                 // Filter selector
-                // TODO: - Add a filter selector which will call the viewModel for updating the displayed data
+                Picker("Filter", selection: $viewModel.filterIndex) {
+                    Text("All").tag(0)
+                    Text("Done").tag(1)
+                    Text("Not done").tag(2)
+                }
+                .pickerStyle(SegmentedPickerStyle())
+                .padding()
+                .onChange(of: viewModel.filterIndex) { index in
+                    viewModel.applyFilter(at: index)
+                }
                 // List of tasks
                 List {
-                    ForEach(viewModel.toDoItems) { item in
+                    ForEach(viewModel.filteredToDoItems) { item in
                         HStack {
                             Button(action: {
                                 viewModel.toggleTodoItemCompletion(item)
